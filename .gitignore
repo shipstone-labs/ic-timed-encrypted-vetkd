@@ -15,3 +15,4 @@ src/encrypted_notes_rust/target
 dfx.json
 src/frontend/src/lib/backend.ts
 src/frontend/src/lib/idlFactory.js
+.dns_output

@@ -8,9 +8,11 @@ import Italic from "svelte-icons/fa/FaItalic.svelte";
 import FaListUl from "svelte-icons/fa/FaListUl.svelte";
 
 export let editor: Editor;
-export let disabled: boolean = false;
+// biome-ignore lint/style/useConst: <explanation>
+export let disabled = false;
 
-let classNames: string = "";
+// biome-ignore lint/style/useConst: <explanation>
+let classNames = "";
 export { classNames as class };
 
 function focus(el: HTMLElement) {
