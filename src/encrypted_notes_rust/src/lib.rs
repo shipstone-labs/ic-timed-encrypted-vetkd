@@ -411,7 +411,7 @@ fn remove_user(note_id: NoteId, user: Option<PrincipalName>) {
 
 mod vetkd_types;
 
-const VETKD_SYSTEM_API_CANISTER_ID: &str = "s55qq-oqaaa-aaaaa-aaakq-cai";
+const VETKD_SYSTEM_API_CANISTER_ID: &str = "nn664-2iaaa-aaaao-a3tqq-cai";
 
 use vetkd_types::{
     CanisterId, VetKDCurve, VetKDEncryptedKeyReply, VetKDEncryptedKeyRequest, VetKDKeyId,

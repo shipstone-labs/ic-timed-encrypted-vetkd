@@ -357,7 +357,7 @@ shared ({ caller = initializer }) actor class () {
         }) -> async ({ encrypted_key : Blob });
     };
 
-    let vetkd_system_api : VETKD_SYSTEM_API = actor ("s55qq-oqaaa-aaaaa-aaakq-cai");
+    let vetkd_system_api : VETKD_SYSTEM_API = actor ("nn664-2iaaa-aaaao-a3tqq-cai");
 
     public shared ({ caller }) func symmetric_key_verification_key_for_note() : async Text {
         let { public_key } = await vetkd_system_api.vetkd_public_key({
