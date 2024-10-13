@@ -37,14 +37,14 @@ $: {
   <span slot="title"> Your notes </span>
   <svelte:fragment slot="actions">
     {#if $notesStore.state === 'loaded' && $notesStore.list.length > 0}
-      <a class="btn btn-primary" href="/">New Note</a>
+      <a class="btn btn-primary" href="/">New IP Doc</a>
     {/if}
   </svelte:fragment>
 </Header>
 <main class="p-4">
   {#if $notesStore.state === 'loading'}
     <Spinner />
-    Loading notes...
+    Loading IP Docs...
   {:else if $notesStore.state === 'loaded'}
     {#if $notesStore.list.length > 0}
       <div class="mb-6">
@@ -65,12 +65,12 @@ $: {
         {/each}
       </div>
     {:else}
-      <div class="text-center pt-8 italic">You don't have any notes.</div>
+      <div class="text-center pt-8 italic">You don't have any IP Docs.</div>
       <div class="text-center pt-8 ">
-        <a href="/" class="btn btn-primary">Add a note</a>
+        <a href="/" class="btn btn-primary">Add an IP Doc</a>
       </div>
     {/if}
   {:else if $notesStore.state === 'error'}
-    <div class="alert alert-error">Could not load notes.</div>
+    <div class="alert alert-error">Could not load IP Docs.</div>
   {/if}
 </main>

@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { AuthState, login } from '../store/auth';
-  import DisclaimerCopy from './DisclaimerCopy.svelte';
-  import Spinner from './Spinner.svelte';
+import { type AuthState, login } from "../store/auth";
+import DisclaimerCopy from "./DisclaimerCopy.svelte";
+import Spinner from "./Spinner.svelte";
 
-  export let auth: Extract<
-    AuthState,
-    {
-      state:
-        | 'initializing-auth'
-        | 'initializing-crypto'
-        | 'synchronizing'
-        | 'anonymous'
-        | 'error';
-    }
-  >;
+export let auth: Extract<
+	AuthState,
+	{
+		state:
+			| "initializing-auth"
+			| "initializing-crypto"
+			| "synchronizing"
+			| "anonymous"
+			| "error";
+	}
+>;
 </script>
 
 <div class="hero min-h-screen pt-8 sm:pt-0 content-start sm:content-center">
@@ -22,10 +22,10 @@
       <h1
         class="mb-5 text-4xl sm:text-5xl font-bold text-primary dark:text-white"
       >
-        Encrypted Notes
+        Mini IP Manager
       </h1>
       <p class="mb-5 text-xl font-semibold">
-        Your private notes on the Internet Computer.
+        Your private IP Docs on the Internet Computer.
       </p>
       <p class="mb-5">
         A safe place to store your personal lists, thoughts, ideas or
@@ -44,7 +44,7 @@
         </div>
       {:else if auth.state === 'anonymous'}
         <button class="btn btn-primary" on:click={() => login()}
-          >Please login to start writing notes</button
+          >Please login to start writing IP Docs</button
         >
       {:else if auth.state === 'error'}
         <div class="text-lg font-semibold mt-8">An error occurred.</div>

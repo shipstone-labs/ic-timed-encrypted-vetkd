@@ -45,7 +45,7 @@ async function add() {
 	editor.setHTML("");
 	tags = [];
 
-	addNotification({ type: "success", message: "Note added successfully" });
+	addNotification({ type: "success", message: "IP Doc added successfully" });
 
 	// refresh notes in the background
 	refreshNotes($auth.actor, $auth.crypto).catch((e) =>
@@ -79,12 +79,19 @@ onDestroy(saveDraft);
 
 <main class="p-4">
   <NoteEditor {editor} class="mb-3" disabled={creating} />
-  <TagEditor
-    {tags}
-    on:add={(e) => addTag(e.detail)}
-    on:remove={(e) => removeTag(e.detail)}
-    disabled={creating}
-  />
+  <div class="bg-gray-100 p-4 rounded-lg shadow-md space-y-2 text-sm">
+    <div class="flex flex-row">
+      <span class="font-bold w-28">Tags:</span>
+      <span>
+        <TagEditor
+          {tags}
+          on:add={(e) => addTag(e.detail)}
+          on:remove={(e) => removeTag(e.detail)}
+          disabled={creating}
+        />
+      </span>
+    </div>
+  </div>
   <button
     class="btn mt-6 btn-primary {creating ? 'loading' : ''}"
     disabled={creating}

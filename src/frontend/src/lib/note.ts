@@ -6,6 +6,13 @@ export interface PrincipalEntryModel {
   name?: string;
   when?: bigint;
 }
+
+export interface HistoryEntry {
+  action: string;
+  user: string;
+  when: number;
+  createdAt: number;
+}
 export interface NoteModel {
   id: bigint;
   title: string;
@@ -15,6 +22,8 @@ export interface NoteModel {
   tags: Array<string>;
   owner: string;
   users: Array<PrincipalEntryModel>;
+  locked: boolean;
+  history: Array<HistoryEntry>;
 }
 
 type SerializableNoteModel = Pick<NoteModel, "content">;
@@ -35,11 +44,13 @@ export function noteFromContent(
     id: BigInt(0),
     title,
     content,
-    createdAt: creationTime,
-    updatedAt: creationTime,
     tags,
     owner: self_principal.toString(),
     users: [],
+    createdAt: creationTime,
+    updatedAt: creationTime,
+    locked: false,
+    history: [],
   };
 }
 
@@ -73,6 +84,10 @@ export async function serialize(
           when: user.when ? [user.when] : [],
         } as PrincipalEntry)
     ),
+    history: [],
+    created_at: BigInt(note.createdAt * 1000000),
+    updated_at: BigInt(note.updatedAt * 1000000),
+    locked: note.locked,
   };
 }
 
@@ -96,6 +111,16 @@ export async function deserialize(
     })),
     ...deserializedNote,
     ...data,
+    history: enote.history.map((entry) => ({
+      action: entry.action,
+      user: entry.user.length > 0 ? entry.user[0] : null,
+      when:
+        entry.when.length > 0 ? Number(entry.when[0] / BigInt(1000000)) : null,
+      createdAt: Number(entry.created_at / BigInt(1000000)),
+    })),
+    createdAt: Number(enote.created_at / BigInt(1000000)),
+    updatedAt: Number(enote.updated_at / BigInt(1000000)),
+    locked: enote.locked,
   };
 }
 

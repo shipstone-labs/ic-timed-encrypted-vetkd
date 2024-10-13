@@ -14,14 +14,27 @@ type anon_class_15_1 =
 type PrincipalEntry = 
  record {
    name: opt text;
-   when: opt int;
+   when: opt nat64;
  };
+
+type HistoryEntry = 
+ record {
+   action: text;
+   user: opt text;
+   when: opt nat64;
+   created_at: nat64;
+ };
+
 type EncryptedNote = 
  record {
+   id: nat;
    encrypted_text: text;
    data: text;
-   id: nat;
    owner: text;
    users: vec PrincipalEntry;
+   locked: bool;
+   created_at: nat64;
+   updated_at: nat64;
+   history: vec HistoryEntry;
  };
 service : () -> anon_class_15_1

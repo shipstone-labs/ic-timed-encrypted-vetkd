@@ -37,7 +37,7 @@ $: {
   <span slot="title"> Your notes </span>
   <svelte:fragment slot="actions">
     {#if $notesStore.state === 'loaded' && $notesStore.list.length > 0}
-      <a class="btn btn-primary" href="/">New Note</a>
+      <a class="btn btn-primary" href="/">New IP Doc</a>
     {/if}
   </svelte:fragment>
 </Header>

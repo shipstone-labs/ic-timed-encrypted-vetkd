@@ -1,110 +1,120 @@
 <script lang="ts">
-  import { navigateTo } from 'svelte-router-spa';
-  import type { CurrentRoute } from 'svelte-router-spa/types/components/route';
-  import { Editor, placeholder } from 'typewriter-editor';
-  import { extractTitle, NoteModel } from '../lib/note';
-  import { notesStore, refreshNotes, updateNote, addUser, removeUser } from '../store/notes';
-  import Header from './Header.svelte';
-  import NoteEditor from './NoteEditor.svelte';
-  import TagEditor from './TagEditor.svelte';
-  import SharingEditor from './SharingEditor.svelte';
-  import Trash from 'svelte-icons/fa/FaTrash.svelte';
-  import { addNotification, showError } from '../store/notifications';
-  import { auth } from '../store/auth';
-  import Spinner from './Spinner.svelte';
+import { navigateTo } from "svelte-router-spa";
+import type { CurrentRoute } from "svelte-router-spa/types/components/route";
+import { Editor, placeholder } from "typewriter-editor";
+import { extractTitle, type NoteModel } from "../lib/note";
+import {
+	notesStore,
+	refreshNotes,
+	updateNote,
+	addUser,
+	removeUser,
+} from "../store/notes";
+import Header from "./Header.svelte";
+import NoteEditor from "./NoteEditor.svelte";
+import TagEditor from "./TagEditor.svelte";
+import SharingEditor from "./SharingEditor.svelte";
+import Trash from "svelte-icons/fa/FaTrash.svelte";
+import { addNotification, showError } from "../store/notifications";
+import { auth } from "../store/auth";
+import Spinner from "./Spinner.svelte";
 
-  export let currentRoute: CurrentRoute;
+export let currentRoute: CurrentRoute;
 
-  let editedNote: NoteModel;
-  let editor: Editor;
-  let updating = false;
-  let deleting = false;
-  let ownedByMe;
+let editedNote: NoteModel;
+let editor: Editor;
+let updating = false;
+let deleting = false;
+export let ownedByMe = true;
 
-  async function save() {
-    if ($auth.state !== 'initialized') {
-      return;
-    }
-    const html = editor.getHTML();
-    updating = true;
-    await updateNote(
-      {
-        ...editedNote,
-        content: html,
-        title: extractTitle(html),
-        updatedAt: Date.now(),
-      },
-      $auth.actor,
-      $auth.crypto
-    )
-      .catch((e) => {
-        showError(e, 'Could not update note.');
-      })
-      .finally(() => {
-        updating = false;
-      });
+function addHistory(e) {
+	editedNote.history.push(e.detail);
+}
 
-    addNotification({ type: 'success', message: 'Note saved successfully' });
+async function save() {
+	if ($auth.state !== "initialized") {
+		return;
+	}
+	const html = editor.getHTML();
+	updating = true;
+	await updateNote(
+		{
+			...editedNote,
+			content: html,
+			title: extractTitle(html),
+			updatedAt: Date.now(),
+		},
+		$auth.actor,
+		$auth.crypto,
+	)
+		.catch((e) => {
+			showError(e, "Could not update note.");
+		})
+		.finally(() => {
+			updating = false;
+		});
 
-    await refreshNotes($auth.actor, $auth.crypto).catch((e) =>
-      showError(e, 'Could not refresh notes.')
-    );
-  }
+	addNotification({ type: "success", message: "IP Doc saved successfully" });
 
-  async function deleteNote() {
-    if ($auth.state !== 'initialized') {
-      return;
-    }
-    deleting = true;
-    await $auth.actor.delete_note(editedNote.id).catch((e) => {
-      deleting = false;
-      showError(e, 'Could not delete note.');
-    });
+	await refreshNotes($auth.actor, $auth.crypto).catch((e) =>
+		showError(e, "Could not refresh IP Doc."),
+	);
+}
 
-    await refreshNotes($auth.actor, $auth.crypto)
-      .catch((e) => showError(e, 'Could not refresh notes.'))
-      .finally(() => {
-        addNotification({
-          type: 'success',
-          message: 'Note deleted successfully',
-        });
-        navigateTo('/notes');
-      });
-  }
+async function deleteNote() {
+	if ($auth.state !== "initialized") {
+		return;
+	}
+	deleting = true;
+	await $auth.actor.delete_note(editedNote.id).catch((e) => {
+		deleting = false;
+		showError(e, "Could not delete IP Doc.");
+	});
 
-  function addTag(tag: string) {
-    editedNote.tags = [...editedNote.tags, tag];
-  }
+	await refreshNotes($auth.actor, $auth.crypto)
+		.catch((e) => showError(e, "Could not refresh IP Docs."))
+		.finally(() => {
+			addNotification({
+				type: "success",
+				message: "IP Doc deleted successfully",
+			});
+			navigateTo("/notes");
+		});
+}
 
-  function removeTag(tag: string) {
-    editedNote.tags = editedNote.tags.filter((t) => t !== tag);
-  }
+function addTag(tag: string) {
+	editedNote.tags = [...editedNote.tags, tag];
+}
 
-  function selfPrincipalString(): string {
-    if ($auth.state !== 'initialized') {
-      throw new Error('expected the auth.state to be initialized');
-    }
-    return $auth.client.getIdentity().getPrincipal().toString();
-  }
+function removeTag(tag: string) {
+	editedNote.tags = editedNote.tags.filter((t) => t !== tag);
+}
 
-  $: {
-    if ($notesStore.state === 'loaded' && !editedNote) {
-      const note = $notesStore.list.find(
-        (note) => note.id.toString() === currentRoute.namedParams.id
-      );
+function selfPrincipalString(): string {
+	if ($auth.state !== "initialized") {
+		throw new Error("expected the auth.state to be initialized");
+	}
+	return $auth.client.getIdentity().getPrincipal().toString();
+}
 
-      if (note) {
-        editedNote = { ...note };
-        editor = new Editor({
-          modules: {
-            placeholder: placeholder('Start typing...'),
-          },
-          html: editedNote.content,
-        });
-        ownedByMe = note.owner == selfPrincipalString();
-      }
-    }
-  }
+$: {
+	if ($notesStore.state === "loaded" && !editedNote) {
+		const note = $notesStore.list.find(
+			(note) => note.id.toString() === currentRoute.namedParams.id,
+		);
+
+		if (note) {
+			editedNote = { ...note };
+			editor = new Editor({
+				modules: {
+					placeholder: placeholder("Start typing..."),
+				},
+				html: editedNote.content,
+			});
+			ownedByMe = note.owner === selfPrincipalString();
+		}
+	}
+}
 </script>
 
 {#if editedNote}
@@ -123,39 +133,80 @@
       {deleting ? 'Deleting...' : ''}
     </button>
   </Header>
-  <main class="p-4">
+  <main class="p-4 space-y-6">
     {#if $notesStore.state === 'loaded'}
-      <NoteEditor {editor} disabled={updating || deleting} class="mb-3" />
-      <TagEditor
-        tags={editedNote.tags}
-        on:add={(e) => addTag(e.detail)}
-        on:remove={(e) => removeTag(e.detail)}
-        disabled={updating || deleting}
-      />
-      <button
-        class="btn mt-4 btn-primary {updating ? 'loading' : ''}"
-        disabled={updating || deleting}
-        on:click={save}>{updating ? 'Saving...' : 'Save'}</button
-      >
-      <hr class="mt-10">
-      <SharingEditor
-        {editedNote}
-        {ownedByMe}
-      />
+      <!-- Note Editor Section -->
+      <NoteEditor {editor} disabled={updating || deleting || !ownedByMe} class="mb-4" />
+      
+      <!-- Note Details Section -->
+      <div class="bg-gray-100 p-4 rounded-lg shadow-md space-y-2 text-sm">
+        <div class="flex flex-row">
+          <span class="font-bold w-28">Created:</span>
+          <span>{new Date(editedNote.createdAt).toLocaleString()}</span>
+        </div>
+        <div class="flex flex-row">
+          <span class="font-bold w-28">Updated:</span>
+          <span>{new Date(editedNote.updatedAt).toLocaleString()}</span>
+        </div>
+        <div class="flex flex-row">
+          <span class="font-bold w-28">Status:</span>
+          <span>{!ownedByMe || editedNote.locked ? 'ReadOnly' : 'Editable' }</span>
+        </div>
+        <div class="flex flex-row">
+          <span class="font-bold w-28">Tags:</span>
+          <span>
+            <TagEditor
+              tags={editedNote.tags}
+              on:add={(e) => addTag(e.detail)}
+              on:remove={(e) => removeTag(e.detail)}
+              disabled={updating || deleting || !ownedByMe}
+            />
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Buttons and Sharing Section -->
+      <div class="space-y-4">
+        <button
+          class="btn btn-primary {updating ? 'loading' : ''} w-full md:w-auto"
+          disabled={updating || deleting || !ownedByMe}
+          on:click={save}>
+          {updating ? 'Saving...' : 'Save'}
+        </button>
+
+        <SharingEditor {editedNote} {ownedByMe} on:message={addHistory}/>
+      </div>
+
+      <!-- History Section -->
+      <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+        <p class="text-lg font-bold mb-2">History</p>
+        <div class="space-y-2">
+          {#each editedNote.history as entry}
+            <div class="flex flex-row space-x-4 text-sm">
+              <span class="font-mono text-gray-600">{new Date(entry.createdAt).toLocaleString()}</span>
+              <span>{entry.action}</span>
+              <span>{entry.action === "shared" ? `with ${entry.user || "everyone"}` : ""}</span>
+              <span>{entry.action === "shared" ? entry.when ? `after ${new Date(entry.when).toLocaleString()}` : "always" : ""}</span>
+            </div>
+          {/each}
+        </div>
+      </div>
+    
     {:else if $notesStore.state === 'loading'}
-      Loading notes...
+      <!-- Loading State -->
+      <div class="text-center text-lg font-semibold">Loading IP Docs...</div>
     {/if}
   </main>
 {:else}
   <Header>
-    <span slot="title"> Edit note </span>
+    <span slot="title"> Edit IP Doc </span>
   </Header>
   <main class="p-4">
     {#if $notesStore.state === 'loading'}
       <Spinner />
-      Loading note...
+      Loading IP Doc...
     {:else if $notesStore.state === 'loaded'}
-      <div class="alert alert-error">Could not find note.</div>
+      <div class="alert alert-error">Could not find IP Doc.</div>
     {/if}
   </main>
 {/if}
