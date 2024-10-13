@@ -122,7 +122,7 @@ $: {
     <span slot="title"> Edit note </span>
     <button
       slot="actions"
-      class="btn btn-ghost {deleting ? 'loading' : ''} {!ownedByMe ? 'hidden' : ''}"
+      class="btn btn-ghost {deleting ? 'loading' : ''} {!ownedByMe || editedNote.locked ? 'hidden' : ''}"
       on:click={deleteNote}
       disabled={updating || deleting}
     >
@@ -136,7 +136,7 @@ $: {
   <main class="p-4 space-y-6">
     {#if $notesStore.state === 'loaded'}
       <!-- Note Editor Section -->
-      <NoteEditor {editor} disabled={updating || deleting || !ownedByMe} class="mb-4" />
+      <NoteEditor {editor} disabled={updating || deleting || !ownedByMe || editedNote.locked} class="mb-4" />
       
       <!-- Note Details Section -->
       <div class="bg-gray-100 p-4 rounded-lg shadow-md space-y-2 text-sm">
@@ -150,7 +150,7 @@ $: {
         </div>
         <div class="flex flex-row">
           <span class="font-bold w-28">Status:</span>
-          <span>{!ownedByMe || editedNote.locked ? 'ReadOnly' : 'Editable' }</span>
+          <span>{!ownedByMe || editedNote.locked || editedNote.locked ? 'ReadOnly' : 'Editable' }</span>
         </div>
         <div class="flex flex-row">
           <span class="font-bold w-28">Tags:</span>
@@ -159,7 +159,7 @@ $: {
               tags={editedNote.tags}
               on:add={(e) => addTag(e.detail)}
               on:remove={(e) => removeTag(e.detail)}
-              disabled={updating || deleting || !ownedByMe}
+              disabled={updating || deleting || !ownedByMe || editedNote.locked}
             />
           </span>
         </div>
@@ -169,7 +169,7 @@ $: {
       <div class="space-y-4">
         <button
           class="btn btn-primary {updating ? 'loading' : ''} w-full md:w-auto"
-          disabled={updating || deleting || !ownedByMe}
+          disabled={updating || deleting || !ownedByMe || editedNote.locked}
           on:click={save}>
           {updating ? 'Saving...' : 'Save'}
         </button>
