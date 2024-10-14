@@ -174,6 +174,7 @@ shared ({ caller = initializer }) actor class () {
         let owned_notes = List.map(
             Option.get(noteIdsByOwner.get(user), List.nil()),
             func(nid : NoteId) : EncryptedNote {
+                check_duplicates.insert(nid);
                 expect(notesById.get(nid), "missing note with ID " # Nat.toText(nid));
             },
         );

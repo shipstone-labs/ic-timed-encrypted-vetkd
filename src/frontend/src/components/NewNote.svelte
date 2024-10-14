@@ -74,12 +74,12 @@ onDestroy(saveDraft);
 <svelte:window on:beforeunload={saveDraft} />
 
 <Header>
-  <span slot="title"> New note </span>
+  <span slot="title"> New IP Doc </span>
 </Header>
 
 <main class="p-4">
   <NoteEditor {editor} class="mb-3" disabled={creating} />
-  <div class="bg-gray-100 p-4 rounded-lg shadow-md space-y-2 text-sm">
+  <div class="bg-gray-100 dark:bg-base-100 p-4 rounded-lg shadow-md space-y-2 text-sm">
     <div class="flex flex-row">
       <span class="font-bold w-28">Tags:</span>
       <span>

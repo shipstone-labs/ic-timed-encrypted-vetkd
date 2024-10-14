@@ -51,7 +51,7 @@ import { copy } from "svelte-copy";
             <span class="w-6 h-6 p-1 mr-2">
               <FaPlusSquare />
             </span>
-            New note
+            New IP Doc
           </a>
         </li>
         <li>
@@ -59,7 +59,7 @@ import { copy } from "svelte-copy";
             <span class="w-6 h-6 p-1 mr-2">
               <FaBook />
             </span>
-            Your notes</a
+            Your IP Docs</a
           >
         </li>
         <li class="flex-1" />

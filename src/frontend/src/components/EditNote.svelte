@@ -2,7 +2,7 @@
 import { navigateTo } from "svelte-router-spa";
 import type { CurrentRoute } from "svelte-router-spa/types/components/route";
 import { Editor, placeholder } from "typewriter-editor";
-import { extractTitle, type NoteModel } from "../lib/note";
+import { extractTitle, type HistoryEntry, type NoteModel } from "../lib/note";
 import {
 	notesStore,
 	refreshNotes,
@@ -25,10 +25,21 @@ let editedNote: NoteModel;
 let editor: Editor;
 let updating = false;
 let deleting = false;
+// biome-ignore lint/style/useConst: <explanation>
+export let history: HistoryEntry[] = [];
 export let ownedByMe = true;
 
 function addHistory(e) {
-	editedNote.history.push(e.detail);
+	if (e.detail.action === "shared") {
+		if (!editedNote.locked) {
+			editedNote.locked = true;
+			history = [
+				...history,
+				{ action: "locked", user: null, when: null, createdAt: Date.now() },
+			];
+		}
+	}
+	history = [...history, { ...e.detail }];
 }
 
 async function save() {
@@ -105,6 +116,7 @@ $: {
 
 		if (note) {
 			editedNote = { ...note };
+			history = note.history;
 			editor = new Editor({
 				modules: {
 					placeholder: placeholder("Start typing..."),
@@ -139,7 +151,7 @@ $: {
       <NoteEditor {editor} disabled={updating || deleting || !ownedByMe || editedNote.locked} class="mb-4" />
       
       <!-- Note Details Section -->
-      <div class="bg-gray-100 p-4 rounded-lg shadow-md space-y-2 text-sm">
+      <div class="bg-gray-100 dark:bg-base-100 p-4 rounded-lg shadow-md space-y-2 text-sm">
         <div class="flex flex-row">
           <span class="font-bold w-28">Created:</span>
           <span>{new Date(editedNote.createdAt).toLocaleString()}</span>
@@ -178,15 +190,17 @@ $: {
       </div>
 
       <!-- History Section -->
-      <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+      <div class="bg-gray-100 dark:bg-base-100 p-4 rounded-lg shadow-md">
         <p class="text-lg font-bold mb-2">History</p>
-        <div class="space-y-2">
-          {#each editedNote.history as entry}
-            <div class="flex flex-row space-x-4 text-sm">
-              <span class="font-mono text-gray-600">{new Date(entry.createdAt).toLocaleString()}</span>
-              <span>{entry.action}</span>
-              <span>{entry.action === "shared" ? `with ${entry.user || "everyone"}` : ""}</span>
-              <span>{entry.action === "shared" ? entry.when ? `after ${new Date(entry.when).toLocaleString()}` : "always" : ""}</span>
+        <div class="space-y-1">
+          {#each history as entry}
+            <div class="flex flex-row bg-gray-200 dark:bg-base-200 space-x-4 text-sm p-2 rounded-lg shadow-md">
+              <span class="font-mono text-gray-600 dark:text-white text-xs">{new Date(entry.createdAt).toLocaleDateString()}<br/>{new Date(entry.createdAt).toLocaleTimeString()}</span>
+              <span>
+                {entry.action}
+                {entry.action.includes("shared") ? `with ${entry.user || "everyone"}` : ""}
+                {entry.action === "shared" ? entry.when ? `after ${new Date(entry.when).toLocaleString()}` : "always" : ""}
+              </span>
             </div>
           {/each}
         </div>

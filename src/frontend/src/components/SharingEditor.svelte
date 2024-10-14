@@ -49,10 +49,13 @@ async function add() {
 			...editedNote.users.filter((u) => u.name !== newSharing),
 			{ name: newSharing, when: dateValue(newWhenValue) },
 		];
+		const when = newWhenChecked
+			? null
+			: Number(dateValue(newWhenValue) / BigInt(1000000));
 		dispatch("message", {
 			action: "shared",
 			user: newSharingChecked ? null : newSharing || "everyone",
-			when: Number(dateValue(newWhenValue) / BigInt(1000000)),
+			when,
 			createdAt: Date.now(),
 		});
 		newSharing = "";
@@ -73,14 +76,14 @@ async function remove(sharing: string) {
 	removing = true;
 	try {
 		await removeUser(editedNote.id, sharing, $auth.actor);
-		editedNote.users = editedNote.users.filter((u) => u !== sharing);
+		editedNote.users = editedNote.users.filter((u) => u.name !== sharing);
 		addNotification({
 			type: "success",
 			message: "User successfully removed",
 		});
 		dispatch("message", {
 			action: "unshared",
-			user: newSharingChecked ? null : newSharing || "everyone",
+			user: sharing || "everyone",
 			when: null,
 			createdAt: Date.now(),
 		});
@@ -107,12 +110,13 @@ function onKeyPress(e) {
 }
 </script>
 
-<div class="bg-gray-100 p-4 rounded-lg shadow-md">
-  <p class="text-lg font-bold mb-2">Additional Readers</p>
+<div class="bg-gray-100 dark:bg-base-100 p-4 rounded-lg shadow-md">
+  <p class="text-lg font-bold mb-2">Sharing IP Docs</p>
   {#if ownedByMe}
     <p class="mt-1">
-      Add users by their principal to allow them read the IP Doc.
-      Optionally you can set a date at which the note will show.
+      Add users by their principal or everyone to allow them to read the IP Doc.
+      Optionally you can set a date at which the note will become readable by them.
+      Each user has their principal with a copy button at the top left of the page.
     </p>
   {:else}
     <p class="mt-3">
@@ -121,7 +125,7 @@ function onKeyPress(e) {
     </p>
     <p class="mt-3">Users with whom the owner shared the note:</p>
   {/if}
-  <div class="flex flex-col space-x-2 mt-2">
+  <div class="flex flex-col gap-2 mt-2">
     {#each editedNote.users as sharing}
       <div class="flex flex-row">
         <button

@@ -1,39 +1,36 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher } from "svelte";
 
-  export let tags: string[];
-  export let disabled = false;
+export let tags: string[];
+// biome-ignore lint/style/useConst: <explanation>
+export let disabled = false;
 
-  let newTag = '';
-  let newTagInput: HTMLInputElement;
+let newTag = "";
+let newTagInput: HTMLInputElement;
 
-  const dispatch = createEventDispatcher<{
-    add: string;
-    remove: string;
-  }>();
+const dispatch = createEventDispatcher<{
+	add: string;
+	remove: string;
+}>();
 
-  function add() {
-    dispatch('add', newTag);
-    newTag = '';
-    newTagInput.focus();
-  }
+function add() {
+	dispatch("add", newTag);
+	newTag = "";
+	newTagInput.focus();
+}
 
-  function remove(tag: string) {
-    dispatch('remove', tag);
-  }
+function remove(tag: string) {
+	dispatch("remove", tag);
+}
 
-  function onKeyPress(e) {
-    if (
-      e.key === 'Enter' &&
-      newTag.trim().length > 0 &&
-      !tags.includes(newTag)
-    ) {
-      add();
-    }
-  }
+function onKeyPress(e) {
+	if (e.key === "Enter" && newTag.trim().length > 0 && !tags.includes(newTag)) {
+		add();
+	}
+}
 </script>
 
-<div class="flex flex-wrap space-x-2">
+<div class="flex flex-wrap gap-2">
   {#each tags as tag}
     <button
       class="btn btn-outline btn-sm flex items-center"

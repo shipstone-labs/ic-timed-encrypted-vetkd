@@ -28,8 +28,7 @@ export let auth: Extract<
         Your private IP Docs on the Internet Computer.
       </p>
       <p class="mb-5">
-        A safe place to store your personal lists, thoughts, ideas or
-        passphrases and much more...
+        A safe place to store and share your personal IP.
       </p>
 
       {#if auth.state === 'initializing-auth' || auth.state === 'initializing-crypto'}
@@ -44,7 +43,7 @@ export let auth: Extract<
         </div>
       {:else if auth.state === 'anonymous'}
         <button class="btn btn-primary" on:click={() => login()}
-          >Please login to start writing IP Docs</button
+          >Login to Store and Share your IP</button
         >
       {:else if auth.state === 'error'}
         <div class="text-lg font-semibold mt-8">An error occurred.</div>

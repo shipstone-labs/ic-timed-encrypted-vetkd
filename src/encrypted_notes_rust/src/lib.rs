@@ -107,8 +107,8 @@ impl Storable for NoteIds {
 // For the current limits see https://internetcomputer.org/docs/current/developer-docs/production/resource-limits.
 // To ensure that our canister does not exceed the limit, we put various restrictions (e.g., number of users) in place.
 static MAX_USERS: u64 = 1_000;
-static MAX_NOTES_PER_USER: usize = 500;
-static MAX_NOTE_CHARS: usize = 1000;
+static MAX_NOTES_PER_USER: usize = 50;
+static MAX_NOTE_CHARS: usize = 100000;
 static MAX_SHARES_PER_NOTE: usize = 50;
 
 thread_local! {
@@ -204,6 +204,9 @@ fn get_notes() -> Vec<EncryptedNote> {
                 .map(|id| notes.get(id).ok_or(format!("missing note with ID {id}")))
                 .filter(|note| {
                     if let Ok(item) = note {
+                        if owned.clone().iter().any(|u| u.id == item.id) {
+                            return false;
+                        }
                         item.users.iter().any(|u| {
                             if let Some(name) = &u.name {
                                 name == &user_str
@@ -226,6 +229,11 @@ fn get_notes() -> Vec<EncryptedNote> {
                 .map(|id| notes.get(id).ok_or(format!("missing note with ID {id}")))
                 .filter(|note| {
                     if let Ok(item) = note {
+                        if owned.clone().iter().any(|u| u.id == item.id)
+                            || shared.clone().iter().any(|u| u.id == item.id)
+                        {
+                            return false;
+                        }
                         item.users.iter().any(|u| {
                             if let Some(name) = &u.name {
                                 name == &user_str
@@ -401,7 +409,15 @@ fn add_user(note_id: NoteId, user: PrincipalEntry) {
                 }
                 assert!(note.users.len() < MAX_SHARES_PER_NOTE);
 
-                note.locked = true;
+                if !note.locked {
+                    note.locked = true;
+                    note.history.push(HistoryEntry {
+                        action: "locked".to_string(),
+                        user: None,
+                        when: None,
+                        created_at: ic_cdk::api::time(),
+                    });
+                }
                 note.history.push(HistoryEntry {
                     action: "shared".to_string(),
                     user: user.name.clone(),
@@ -446,7 +462,7 @@ fn remove_user(note_id: NoteId, user: Option<PrincipalName>) {
                 if owner != &caller_str {
                     ic_cdk::trap("only the owner can share the note");
                 }
-                note.locked = true;
+
                 note.users.retain(|u| u.name != user);
                 note.history.push(HistoryEntry {
                     action: "unshared".to_string(),
@@ -504,10 +520,23 @@ async fn encrypted_symmetric_key_for_note(
     encryption_public_key: Vec<u8>,
 ) -> String {
     let user_str = caller().to_string();
-    let request = NOTES.with_borrow(|notes| {
-        if let Some(note) = notes.get(&note_id) {
+    let request = NOTES.with_borrow_mut(|notes| {
+        if let Some(mut note) = notes.get(&note_id) {
             if !note.is_authorized(&user_str) {
                 ic_cdk::trap(&format!("unauthorized key request by user {user_str}"));
+            }
+            let user_str_clone = &Some(user_str.clone());
+            if !note
+                .history
+                .iter()
+                .any(|entry| entry.action == "read" && &entry.user == user_str_clone)
+            {
+                note.history.push(HistoryEntry {
+                    action: "read".to_string(),
+                    user: Some(user_str.clone()),
+                    when: None,
+                    created_at: ic_cdk::api::time(),
+                });
             }
             VetKDEncryptedKeyRequest {
                 derivation_id: {

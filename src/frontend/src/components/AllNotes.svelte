@@ -34,7 +34,7 @@ $: {
 </script>
 
 <Header>
-  <span slot="title"> Your notes </span>
+  <span slot="title"> Your IP Docs </span>
   <svelte:fragment slot="actions">
     {#if $notesStore.state === 'loaded' && $notesStore.list.length > 0}
       <a class="btn btn-primary" href="/">New IP Doc</a>
@@ -65,12 +65,12 @@ $: {
         {/each}
       </div>
     {:else}
-      <div class="text-center pt-8 italic">You don't have any IP Docs.</div>
+      <div class="text-center pt-8 italic">You don't have any IP.</div>
       <div class="text-center pt-8 ">
-        <a href="/" class="btn btn-primary">Add an IP Doc</a>
+        <a href="/" class="btn btn-primary">Add new IP</a>
       </div>
     {/if}
   {:else if $notesStore.state === 'error'}
-    <div class="alert alert-error">Could not load IP Docs.</div>
+    <div class="alert alert-error">Could not load IP.</div>
   {/if}
 </main>
