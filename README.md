@@ -15,7 +15,7 @@ The Mini IP Manager is an application that leverages vetKeys from the Internet C
 4. Sharing Documents: Users can share notes with **Everyone** on the system, or they can share with individual app users registered in the Mini IP Manager service. They have the option to set a specific time when the note becomes accessible or allow access at any time by selecting **Anytime**. Shares can be removed until the recipient has accessed the document. Each interaction is recorded in the history log.
 5. Accessing Shared Notes: Authorized users can view the note content. Tags, the note’s creator and the history log are not encrypted.
 
-Key Features and Considerations:
+Key Features and Considerations
 
 	**Security**: By using vetKeys derived from unique identifiers and owner principals, the system ensures that only intended recipients can decrypt and access the documents.
  
@@ -24,6 +24,8 @@ Key Features and Considerations:
 	**Transparency**: The history log provides a transparent record of all interactions related to each note, enhancing accountability.
  
 	**User Experience**: Continual polling for readable documents ensures users have up-to-date access to new shared content.
+
+
 
 # Encrypted notes: vetKD
 
