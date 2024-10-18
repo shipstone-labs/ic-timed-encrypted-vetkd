@@ -17,13 +17,13 @@ The Mini IP Manager is an application that leverages vetKeys from the Internet C
 
 ## Key Features and Considerations
 
-	Security By using vetKeys derived from unique identifiers and owner principals, the system ensures that only intended recipients can decrypt and access the documents.
+**Security.** By using vetKeys derived from unique identifiers and owner principals, the system ensures that only intended recipients can decrypt and access the documents.
  
-	Flexibility Users control when and with whom their documents are shared, with the ability to set access times and revoke shares if necessary.
+**Flexibility.** Users control when and with whom their documents are shared, with the ability to set access times and revoke shares if necessary.
  
-	Transparency The history log provides a transparent record of all interactions related to each note, enhancing accountability.
+**Transparency.** The history log provides a transparent record of all interactions related to each note, enhancing accountability.
  
-	User Experience Continual polling for readable documents ensures users have up-to-date access to new shared content.
+**User Experience.** Continual polling for readable documents ensures users have up-to-date access to new shared content.
 
 # Encrypted notes: vetKD
 
