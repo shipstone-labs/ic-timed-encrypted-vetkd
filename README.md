@@ -9,17 +9,18 @@ https://youtu.be/UoFhNJdzqNg
 
 The Mini IP Manager is an application that leverages vetKeys from the Internet Computer Protocol (ICP) to securely encrypt and programmatically decrypt and share  IP Docs (AKA notes).  The system ensures that shared content is accessible only under specific conditions set by the creator. Here’s an overview of how it operates:
 
-1.	Initialization and Login: The application checks for a stored login (current principal), which is a cryptographically self-signed access identity within the ICP. If no login is found, the user is prompted to log in using Internet Identity.
-2.	Home Page Functionality: The app continually polls for all notes that the user has permission to read. It lists these notes and retrieves the decryption key (vetKey) necessary to access them. VetKeys are derived from the notes and the owner’s principal, adding a layer of security.
-3.	Creating IP Documents: Users can create new notes by entering content directly on the page. Saving a note will make it available to share with other users. These documents remain editable until they are shared for the first time.
-4.	Sharing Documents: Users can share notes with anyone who logs into the Mini IP Manager service. They have the option to set a specific time when the note becomes accessible or allow access at any time by selecting Anytime”. Shares can be removed until the recipient has accessed the document. Each interaction is recorded in the history log.
-5.	Accessing Shared Notes: Authorized users can view the note content and associated tags, the note’s creator and a history of interactions,
+1. Initialization and Login: The application checks for a stored login (current principal), which is a cryptographically self-signed access identity within the ICP. If no login is found, the user is prompted to log in using Internet Identity.
+2. Home Page Functionality: The app continually polls for all notes that the user has permission to read. It lists these notes and retrieves the decryption key (vetKey) necessary to access them. VetKeys are derived from the notes and the owner’s principal, adding a layer of security.
+3. Creating IP Documents: Users can create new notes by entering content directly on the page. Saving a note will make it available to share with other users. These documents remain editable until they are shared for the first time.
+4. Sharing Documents: Users can share notes with **Everyone** on the system, or they can share with individual app users registered in the Mini IP Manager service. They have the option to set a specific time when the note becomes accessible or allow access at any time by selecting **Anytime**. Shares can be removed until the recipient has accessed the document. Each interaction is recorded in the history log.
+5. Accessing Shared Notes: Authorized users can view the note content. Tags, the note’s creator and the history log are not encrypted.
 
 Key Features and Considerations:
-	•	Security: By using vetKeys derived from unique identifiers and owner principals, the system ensures that only intended recipients can decrypt and access the documents.
-	•	Flexibility: Users control when and with whom their documents are shared, with the ability to set access times and revoke shares if necessary.
-	•	Transparency: The history log provides a transparent record of all interactions related to each note, enhancing accountability.
-	•	User Experience: Continual polling for readable documents ensures users have up-to-date access to new shared content.
+
+	Security: By using vetKeys derived from unique identifiers and owner principals, the system ensures that only intended recipients can decrypt and access the documents.
+	Flexibility: Users control when and with whom their documents are shared, with the ability to set access times and revoke shares if necessary.
+	Transparency: The history log provides a transparent record of all interactions related to each note, enhancing accountability.
+	User Experience: Continual polling for readable documents ensures users have up-to-date access to new shared content.
 
 # Encrypted notes: vetKD
 
